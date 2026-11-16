@@ -1,0 +1,441 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    /* Override base.html container so login stretches 100% edge-to-edge */
+    .container {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        overflow-x: hidden;
+        background: #eef4ff;
+    }
+
+    .login-split-container {
+        display: flex;
+        min-height: 100vh;
+        width: 100%;
+        position: relative;
+        background: linear-gradient(135deg, #f4f8ff 0%, #dce8ff 100%);
+    }
+
+    /* Left Pane with Library Backdrop & S-Curve Divider */
+    .login-left {
+        position: relative;
+        flex: 1.15;
+        background: linear-gradient(135deg, rgba(10, 25, 65, 0.88) 0%, rgba(18, 45, 110, 0.80) 100%),
+                    url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=1600&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+        color: #ffffff;
+        padding: 60px 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        z-index: 1;
+    }
+
+    /* Wavy S-Curve SVG Divider */
+    .wave-divider {
+        position: absolute;
+        top: 0;
+        right: -1px;
+        height: 100%;
+        width: 140px;
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    .brand-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 40px;
+    }
+
+    .brand-header h2 {
+        font-size: 1.65rem;
+        font-weight: 700;
+        line-height: 1.2;
+        margin: 0;
+        letter-spacing: -0.3px;
+    }
+
+    .hero-tagline {
+        font-size: 3.1rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        margin-bottom: 12px;
+    }
+
+    .hero-tagline .learn {
+        color: #38bdf8;
+    }
+
+    .hero-tagline .grow {
+        color: #a855f7;
+    }
+
+    .hero-sub {
+        font-size: 1.2rem;
+        color: #e2e8f0;
+        margin-bottom: 42px;
+        font-weight: 400;
+    }
+
+    .feature-items {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .feature-items li {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        font-size: 1.15rem;
+        font-weight: 500;
+        color: #f8fafc;
+    }
+
+    .feature-circle {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.05rem;
+        color: #ffffff;
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
+        flex-shrink: 0;
+    }
+
+    /* Right Pane & Floating Card */
+    .login-right {
+        flex: 0.95;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        position: relative;
+        z-index: 3;
+    }
+
+    /* Subtle decorative circle in top-right corner */
+    .login-right::before {
+        content: "";
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(147, 197, 253, 0.45) 0%, rgba(147, 197, 253, 0) 70%);
+        pointer-events: none;
+    }
+
+    .auth-card {
+        background: #ffffff;
+        width: 100%;
+        max-width: 450px;
+        border-radius: 28px;
+        padding: 44px 40px;
+        box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .card-title-main {
+        font-size: 1.55rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-top: 14px;
+        margin-bottom: 6px;
+    }
+
+    .subtitle-divider {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        color: #475569;
+        font-size: 0.92rem;
+        margin-bottom: 28px;
+    }
+
+    .subtitle-divider::before,
+    .subtitle-divider::after {
+        content: "";
+        height: 1px;
+        flex: 1;
+        background: #e2e8f0;
+    }
+
+    .input-box {
+        position: relative;
+        margin-bottom: 18px;
+    }
+
+    .input-box input {
+        width: 100%;
+        height: 50px;
+        padding: 0 44px 0 46px;
+        border-radius: 14px;
+        border: 1.5px solid #e2e8f0;
+        background: #f8fafc;
+        font-size: 0.95rem;
+        color: #1e293b;
+        outline: none;
+        transition: all 0.2s ease;
+    }
+
+    .input-box input:focus {
+        border-color: #3b82f6;
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+    }
+
+    .input-box .left-icon {
+        position: absolute;
+        left: 17px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #64748b;
+        font-size: 1rem;
+    }
+
+    .input-box .toggle-password {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #64748b;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 0;
+    }
+
+    .btn-gradient-login {
+        width: 100%;
+        height: 50px;
+        border: none;
+        border-radius: 14px;
+        background: linear-gradient(90deg, #0072ff 0%, #6a11cb 100%);
+        color: #ffffff;
+        font-size: 1.05rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.45);
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .btn-gradient-login:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 24px -5px rgba(106, 17, 203, 0.45);
+    }
+
+    .or-separator {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        color: #64748b;
+        font-size: 0.82rem;
+        font-weight: 600;
+        margin: 18px 0;
+    }
+
+    .or-separator::before,
+    .or-separator::after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .or-separator span {
+        padding: 0 12px;
+    }
+
+    .btn-student-alt {
+        width: 100%;
+        height: 48px;
+        border: none;
+        border-radius: 14px;
+        background: #eef2ff;
+        color: #1e293b;
+        font-size: 0.95rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: background 0.2s ease;
+        cursor: pointer;
+    }
+
+    .btn-student-alt:hover {
+        background: #e0e7ff;
+    }
+
+    @media (max-width: 991px) {
+        .login-left {
+            display: none;
+        }
+        .login-right {
+            flex: 1;
+        }
+    }
+</style>
+
+<div class="login-split-container">
+    <!-- Left Hero Section -->
+    <div class="login-left">
+        <div class="brand-header">
+            <!-- Custom Gradient Open-Book SVG Logo -->
+            <svg width="58" height="46" viewBox="0 0 64 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="wingGradLeft" x1="0" y1="0" x2="32" y2="45" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#38bdf8"/>
+                        <stop offset="100%" stop-color="#3b82f6"/>
+                    </linearGradient>
+                    <linearGradient id="wingGradRight" x1="64" y1="0" x2="32" y2="45" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stop-color="#60a5fa"/>
+                        <stop offset="100%" stop-color="#7c3aed"/>
+                    </linearGradient>
+                </defs>
+                <path d="M30 12C22 4 10 3 4 5V36C11 34 22 36 30 44V12Z" fill="url(#wingGradLeft)"/>
+                <path d="M34 12C42 4 54 3 60 5V36C53 34 42 36 34 44V12Z" fill="url(#wingGradRight)"/>
+                <path d="M2 14C9 12 20 15 29 24V46C20 38 9 36 2 38V14Z" fill="#0284c7" fill-opacity="0.75"/>
+                <path d="M62 14C55 12 44 15 35 24V46C44 38 55 36 62 38V14Z" fill="#6d28d9" fill-opacity="0.75"/>
+            </svg>
+            <h2>Library Management<br>System</h2>
+        </div>
+
+        <div class="hero-tagline">
+            Read &bull; <span class="learn">Learn</span> &bull; <span class="grow">Grow</span>
+        </div>
+        <p class="hero-sub">Your Digital Library, Always at Your Service</p>
+
+        <ul class="feature-items">
+            <li>
+                <div class="feature-circle"><i class="fa-solid fa-book-open"></i></div>
+                <span>Manage Books Easily</span>
+            </li>
+            <li>
+                <div class="feature-circle"><i class="fa-solid fa-users"></i></div>
+                <span>Track Members</span>
+            </li>
+            <li>
+                <div class="feature-circle"><i class="fa-solid fa-right-left"></i></div>
+                <span>Issue &amp; Return Books</span>
+            </li>
+            <li>
+                <div class="feature-circle"><i class="fa-solid fa-chart-column"></i></div>
+                <span>View Reports</span>
+            </li>
+        </ul>
+
+        <!-- Smooth S-Curve SVG Wave Overlay -->
+        <svg class="wave-divider" viewBox="0 0 140 900" preserveAspectRatio="none">
+            <path d="M40,0 C110,220 -20,420 55,650 C95,770 40,850 20,900 L140,900 L140,0 Z" fill="rgba(147, 197, 253, 0.35)"/>
+            <path d="M75,0 C135,230 15,430 85,660 C120,780 70,855 55,900 L140,900 L140,0 Z" fill="#eef4ff"/>
+        </svg>
+    </div>
+
+    <!-- Right Card Section -->
+    <div class="login-right">
+        <div class="auth-card">
+            <div class="text-center">
+                <!-- Card Book Logo -->
+                <svg width="64" height="50" viewBox="0 0 64 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="cardBookL" x1="0" y1="0" x2="32" y2="45" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#38bdf8"/>
+                            <stop offset="100%" stop-color="#2563eb"/>
+                        </linearGradient>
+                        <linearGradient id="cardBookR" x1="64" y1="0" x2="32" y2="45" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#3b82f6"/>
+                            <stop offset="100%" stop-color="#7c3aed"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M30 12C22 4 10 3 4 5V36C11 34 22 36 30 44V12Z" fill="url(#cardBookL)"/>
+                    <path d="M34 12C42 4 54 3 60 5V36C53 34 42 36 34 44V12Z" fill="url(#cardBookR)"/>
+                    <path d="M2 14C9 12 20 15 29 24V46C20 38 9 36 2 38V14Z" fill="#0ea5e9" fill-opacity="0.8"/>
+                    <path d="M62 14C55 12 44 15 35 24V46C44 38 55 36 62 38V14Z" fill="#6d28d9" fill-opacity="0.8"/>
+                </svg>
+
+                <h3 class="card-title-main">Library Management System</h3>
+                <div class="subtitle-divider">Login to access your account</div>
+            </div>
+
+            <form method="POST">
+                <div class="input-box">
+                    <i class="fa-solid fa-user left-icon"></i>
+                    <input type="text" name="username" placeholder="Username / Email" required autofocus>
+                </div>
+
+                <div class="input-box">
+                    <i class="fa-solid fa-lock left-icon"></i>
+                    <input type="password" id="passwordField" name="password" placeholder="Password" required>
+                    <button type="button" class="toggle-password" onclick="togglePass()" title="Show/Hide Password">
+                        <i class="fa-regular fa-eye" id="eyeIcon"></i>
+                    </button>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4" style="font-size: 0.88rem;">
+                    <div class="form-check m-0">
+                        <input class="form-check-input" type="checkbox" id="rememberMe" name="remember">
+                        <label class="form-check-label text-dark" for="rememberMe">Remember Me</label>
+                    </div>
+                    <a href="#" class="text-decoration-none fw-semibold" style="color: #2563eb;">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn-gradient-login">
+                    <i class="fa-solid fa-right-to-bracket"></i> Login
+                </button>
+
+                <div class="or-separator"><span>OR</span></div>
+
+                <button type="button" class="btn-student-alt" onclick="alert('Student portal login can be configured in the user roles module.')">
+                    <i class="fa-solid fa-user-shield"></i> Login as Student
+                </button>
+
+                <div class="text-center mt-4" style="font-size: 0.88rem; color: #334155;">
+                    Don't have an account? <a href="#" class="text-decoration-none fw-semibold" style="color: #2563eb;">Contact Admin</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePass() {
+        const pwd = document.getElementById('passwordField');
+        const icon = document.getElementById('eyeIcon');
+        if (pwd.type === 'password') {
+            pwd.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            pwd.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    }
+</script>
+{% endblock %}
