@@ -1,139 +1,103 @@
-# Library Management System (LBS)
+# 📚 LibMatrix | Library Management System
 
-A web-based Library Management System built with **Python (Flask)** and **MySQL**. Designed with a clean, responsive administrative interface to manage book inventory, student memberships, book circulation, and automated overdue fine calculations.
-
----
-
-## Features
-
-- **Admin Authentication:** Secure login and session management with hashed passwords (`Werkzeug`) and automated default admin initialization.
-- **Dashboard Overview:** Real-time metrics displaying total catalog titles, available copies on shelf, active book loans, and registered students.
-- **Books Catalog Management:** Add new books with stock quantities, search/filter by title or author, and safely delete unissued titles.
-- **Students Directory:** Register student members with class/department, mobile, and email records, with validation preventing deletion of members holding unreturned books.
-- **Circulation & Fine Automation:**
-  - Issue available books to students with an automatic **14-day due date**.
-  - Prevents duplicate active loans of the same book to the same student using database transactions (`FOR UPDATE`).
-  - Automatic late fine calculation (**₹5/day**) for overdue returns.
-  - Complete audit log of recent book returns and fines collected.
+A modern, full-stack, professional-grade Library Management System built with **Flask**, **MySQL**, and a sleek **Bootstrap 5** interface. Designed with a split-screen login portal, real-time inventory management, member directory, and a complete circulation desk for tracking book checkouts and returns.
 
 ---
 
-## Tech Stack
+## 🚀 Key Features
 
-- **Backend:** Python 3, Flask
-- **Database:** MySQL (`mysql-connector-python` / `PyMySQL`)
-- **Frontend:** HTML5, Jinja2 Templates, Custom CSS
-- **Security:** `python-dotenv`, `werkzeug.security`
-
----
-
-## Project Structure
-
-```text
-library-management-system/
-├── app.py                  # Main Flask application & routes
-├── database.py             # MySQL database connection helper
-├── requirements.txt        # Python dependencies
-├── .gitignore              # Ignored files (venv, .env, cache)
-├── static/
-│   └── style.css           # Application stylesheet
-└── templates/
-    ├── base.html           # Master layout & navigation bar
-    ├── login.html          # Admin login screen
-    ├── dashboard.html      # KPI overview & quick actions
-    ├── books.html          # Catalog management & search
-    ├── students.html       # Student directory
-    └── issue.html          # Book issue, return & fine tracking
-```
+* **Modern Authentication Portal:** Split-screen administrator login interface with password visibility toggles and secure session management.
+* **Real-Time Telemetry Dashboard:** Live metrics tracking total book inventory counts, registered library members, active checkouts, and recent circulation logs.
+* **Inventory Catalog (`Books`):** Add, view, track total vs. available copies, manage ISBN records, and remove outdated stock.
+* **Patron Directory (`Members`):** Register new library members and maintain contact details (name, email, phone).
+* **Circulation Desk (`Issue / Return`):** Streamlined checkout system that validates book availability, calculates 14-day due dates, updates stock counts in real-time, and logs returns.
+* **Responsive Dark Sidebar UI:** Fixed dark sidebar navigation layout built with custom CSS gradients and FontAwesome icons.
 
 ---
 
-## Setup & Installation
+## 🛠️ Tech Stack
+
+* **Backend:** Python 3, Flask, Werkzeug (Password Hashing & Security)
+* **Database:** MySQL (`mysql-connector-python`)
+* **Frontend:** HTML5, CSS3, Bootstrap 5, FontAwesome Icons
+
+---
+
+## ⚙️ Prerequisites & Database Setup
+
+Ensure you have **Python 3.x** and **MySQL Server** (via XAMPP, WAMP, or standalone MySQL) installed and running on your machine.
+
+1. Start your MySQL service.
+2. The application automatically creates the `libmatrix_db` database and all required tables (`administrators`, `inventory_books`, `library_members`, `circulation_logs`) when launched for the first time.
+
+---
+
+## 📥 Installation & Running Guide
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/<your-username>/<your-repo-name>.git
-cd <your-repo-name>
+git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY-NAME.git
+cd YOUR-REPOSITORY-NAME
 ```
 
-### 2. Create and Activate Virtual Environment
-```bash
-# Windows
-python -m venv venv
-venv\Scripts\activate
-
-# macOS / Linux
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### 3. Install Dependencies
+### 2. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Configure Environment Variables
-Create a `.env` file in the root directory and configure your MySQL and Flask credentials:
-```env
-SECRET_KEY=your_secret_key_here
-ADMIN_PASSWORD=Admin@123
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=your_mysql_password
-DB_NAME=library_db
+### 3. Configure Database Credentials (Optional)
+If your local MySQL `root` account uses a password, open `database.py` and update the `password` field:
+```python
+conn = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="your_mysql_password",
+    database="libmatrix_db",
+    autocommit=True
+)
 ```
 
-### 5. Database Schema (MySQL)
-Ensure your MySQL database contains the required tables (`users`, `books`, `students`, `issued_books`):
-
-```sql
-CREATE DATABASE IF NOT EXISTS library_db;
-USE library_db;
-
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(100) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE books (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    author VARCHAR(255) NOT NULL,
-    category VARCHAR(100),
-    quantity INT NOT NULL DEFAULT 0
-);
-
-CREATE TABLE students (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(150) NOT NULL,
-    email VARCHAR(150),
-    mobile VARCHAR(20),
-    class_name VARCHAR(100)
-);
-
-CREATE TABLE issued_books (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    book_id INT NOT NULL,
-    student_id INT NOT NULL,
-    issue_date DATE NOT NULL,
-    due_date DATE NOT NULL,
-    return_date DATE DEFAULT NULL,
-    status ENUM('Issued', 'Returned') DEFAULT 'Issued',
-    FOREIGN KEY (book_id) REFERENCES books(id),
-    FOREIGN KEY (student_id) REFERENCES students(id)
-);
-```
-
-### 6. Run the Application
+### 4. Run the Application
 ```bash
 python app.py
 ```
-Open your browser and navigate to `http://127.0.0.1:5000`.
+
+### 5. Access the Web App
+Open your browser and visit:
+```text
+http://127.0.0.1:5000/
+```
+
+* **Default Administrator Credentials:**
+  * **Username:** `LMS`
+  * **Password:** `lms@123`
 
 ---
 
-## Default Login Credentials
+## 🗂️ Project Structure
 
-- **Username:** `LMS`
-- **Password:** `lms@123` *(or the value set in `ADMIN_PASSWORD` inside `.env`)*
+```text
+LibMatrix/
+│
+├── app.py                  # Main Flask application & routes
+├── database.py             # MySQL connection & schema initializer
+├── requirements.txt        # Python dependencies
+├── README.md               # Project documentation
+│
+├── static/
+│   └── style.css           # Custom UI styles, layout, and sidebar rules
+│
+└── templates/
+    ├── base.html           # Layout wrapper (Sidebar, Navbar, Flash alerts)
+    ├── login.html          # Split-screen login interface
+    ├── dashboard.html      # Main telemetry dashboard & quick actions
+    ├── books.html          # Inventory catalog management
+    ├── students.html       # Member directory management
+    └── issue.html          # Circulation desk (Issue & Return workflow)
+```
+
+---
+
+## 📄 License
+
+This project is open-source and available for educational and portfolio purposes.
