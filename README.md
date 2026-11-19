@@ -1,3 +1,9 @@
+# LibMatrix – Library Management System
+
+<escape>🚀</escape> **Live Demo:** [Open LibMatrix](https://lms-jade-sigma-98.vercel.app/)
+
+A modern Library Management System built using Python, Flask, MongoDB, HTML, CSS and Bootstrap.
+
 # 📚 LibMatrix | Library Management System
 
 A modern, full-stack, professional-grade Library Management System built with **Flask**, **MySQL**, and a sleek **Bootstrap 5** interface. Designed with a split-screen login portal, real-time inventory management, member directory, and a complete circulation desk for tracking book checkouts and returns.
